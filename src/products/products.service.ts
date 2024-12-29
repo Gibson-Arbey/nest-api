@@ -127,7 +127,6 @@ export class ProductsService {
     await this.productRepository.remove(product);
   }
 
-  // TODO: Eliminar este metodo
   async deleteAllProducts() {
     const query = this.productRepository.createQueryBuilder('product');
 

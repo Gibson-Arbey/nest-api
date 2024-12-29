@@ -14,6 +14,7 @@ async function main() {
   );
 
   app.setGlobalPrefix('api');
+  app.enableCors();
 
   await app.listen(process.env.PORT);
   logger.log(`Servidor corriendo en el puerto ${process.env.PORT}`);
