@@ -13,6 +13,7 @@ import { Product } from './entities/product.entity';
 import { PaginationDto } from '../common/dtos/pagination.dto';
 import { validate as isUUID } from 'uuid';
 import { ProductImage } from './entities/product-image.entity';
+import { User } from 'src/auth/entities/user.entity';
 
 @Injectable()
 export class ProductsService {
@@ -25,13 +26,14 @@ export class ProductsService {
     private readonly dataSource: DataSource,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, user: User) {
     try {
       const { images = [], ...productDetails } = createProductDto;
       const product = this.productRepository.create({
         ...productDetails,
-        images: images.map((image) =>
-          this.productImageRepository.create({ url: image }),
+        images: images.map(
+          (image) => this.productImageRepository.create({ url: image }),
+          user,
         ),
       });
       await this.productRepository.save(product);
@@ -73,7 +75,7 @@ export class ProductsService {
         .getOne();
     }
 
-    if (!product) throw new NotFoundException(`Product with ${term} not found`);
+    if (!product) throw new NotFoundException(`Producto ${term} no encontrado`);
 
     return product;
   }
@@ -86,7 +88,7 @@ export class ProductsService {
     };
   }
 
-  async update(id: string, updateProductDto: UpdateProductDto) {
+  async update(id: string, updateProductDto: UpdateProductDto, user: User) {
     const { images, ...toUpdate } = updateProductDto;
     const product = await this.productRepository.preload({
       id,
@@ -94,7 +96,7 @@ export class ProductsService {
     });
 
     if (!product)
-      throw new NotFoundException(`Product with id: ${id} not found`);
+      throw new NotFoundException(`Producto con id ${id} no encontrado`);
 
     // Query runner
     const queryRunner = this.dataSource.createQueryRunner();
@@ -109,6 +111,7 @@ export class ProductsService {
           this.productImageRepository.create({ url: image }),
         );
       }
+      product.user = user;
       await queryRunner.manager.save(product);
 
       await queryRunner.commitTransaction();
@@ -142,7 +145,7 @@ export class ProductsService {
 
     this.logger.error(error);
     throw new InternalServerErrorException(
-      'Unexpected error, check server logs',
+      'Ha ocurrido un error inesperado, comuniquese con el administrador',
     );
   }
 }
