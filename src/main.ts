@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { AppModule } from './app.module';
 
 async function main() {
   const app = await NestFactory.create(AppModule);
@@ -12,6 +13,14 @@ async function main() {
       forbidNonWhitelisted: true,
     }),
   );
+
+  const config = new DocumentBuilder()
+    .setTitle('NEST RESTful API')
+    .setDescription('API en nest para administrar productos')
+    .setVersion('1.0')
+    .build();
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api-doc', app, documentFactory);
 
   app.setGlobalPrefix('api');
   app.enableCors();

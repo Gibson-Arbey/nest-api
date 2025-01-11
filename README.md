@@ -10,8 +10,9 @@
 4. Cambiar las variables de entorno
 5. Crear la base de datos
 6. Ejecutar SEED 
-```
-http://localhost:3000/api/seed
-```
+```http://localhost:3000/api/seed```
 
 7. Levantar: ```npm run start:dev```
+
+8. Documentación con Swagger 
+```http://localhost:3000/api-doc```

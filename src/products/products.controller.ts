@@ -17,6 +17,8 @@ import { Auth } from 'src/auth/decorators/auth.decorator';
 import { ValidRoles } from 'src/auth/interfaces/valid-roles';
 import { GetUserAuthenticated } from 'src/auth/decorators/get-user.decorator';
 import { User } from 'src/auth/entities/user.entity';
+import { ApiResponse } from '@nestjs/swagger';
+import { Product } from './entities/product.entity';
 
 @Controller('products')
 export class ProductsController {
@@ -24,6 +26,13 @@ export class ProductsController {
 
   @Post()
   @Auth()
+  @ApiResponse({
+    status: 201,
+    description: 'Producto creado',
+    type: Product,
+  })
+  @ApiResponse({ status: 400, description: 'Error en la petición' })
+  @ApiResponse({ status: 403, description: 'Usuario no tiene permisos.' })
   create(
     @Body() createProductDto: CreateProductDto,
     @GetUserAuthenticated() user: User,

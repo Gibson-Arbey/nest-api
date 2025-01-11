@@ -10,7 +10,9 @@ import { ValidRoles } from './interfaces/valid-roles';
 import { RoleProtected } from './decorators/role-protected.decorator';
 import { UserRoleGuard } from './guards/user-role.guard';
 import { Auth } from './decorators/auth.decorator';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth - modulo de autentificación de la API')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -23,6 +25,11 @@ export class AuthController {
   @Post('login')
   loginUser(@Body() loginUserDto: LoginUserDto) {
     return this.authService.login(loginUserDto);
+  }
+  @Get('check-status')
+  @Auth()
+  checkAuthStatus(@GetUserAuthenticated() user: User) {
+    return this.authService.checkAuthStatus(user);
   }
 
   // Usa decorador role-protected y el user-role
